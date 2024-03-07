@@ -3,7 +3,6 @@ import numpy as np
 import os
 import torch
 from transformers import CanineTokenizer
-from skimage import data
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
@@ -161,7 +160,7 @@ summary(BinaryClassifier())
 
 print("---------------------TRAINING STARTED--------------")
 
-epochs = 10
+epochs = 20
 
 for epoch in range(epochs):
     running_loss = 0.0

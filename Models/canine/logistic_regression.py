@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -43,61 +44,29 @@ print("Shape of Y-train tensor: ",y_train.shape)
 print("Shape of X-test tensor: ",x_test.shape)
 print("Shape of Y-test tensor: ",y_test.shape)
 
-# Model Architecture
-import torch.nn as nn
 
-class BinaryClassifier(nn.Module):
-    def __init__(self):
-        super(BinaryClassifier, self).__init__()
-        self.fc1 = nn.Linear(2048, 4096)
-        self.fce1 = nn.Linear(4096, 2048)
-        self.fce2 = nn.Linear(2048, 1024)
-        self.fc2 = nn.Linear(1024, 512)
-        self.fc3 = nn.Linear(512, 128)
-        self.fc4 = nn.Linear(128, 64)
-        self.fc5 = nn.Linear(64, 32)
-        self.fc6 = nn.Linear(32, 16)
-        self.fc7 = nn.Linear(16, 8)
-        self.fc8 = nn.Linear(8,1)
-        self.sigmoid = nn.Sigmoid()
-        self.dropout = nn.Dropout(p=0.3)
-
+# Same as linear regression! 
+class LogisticRegressionModel(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(LogisticRegressionModel, self).__init__()
+        self.linear = nn.Linear(input_dim, output_dim)
 
     def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fce1(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fce2(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fc2(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fc3(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fc4(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fc5(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fc6(x))
-        x = torch.relu(self.fc7(x))
-        x = self.sigmoid(self.fc8(x))
+        x = self.linear(x)
         return x
+    
+input_dim = 2048
+output_dim = 1
 
+model = LogisticRegressionModel(input_dim, output_dim).to(device)
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = BinaryClassifier().to(device)
-print(model)
+criterion = nn.CrossEntropyLoss() 
 
-criterion = nn.BCELoss()  # Binary Cross Entropy Loss
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
+learning_rate = 0.0008
 
-from torchinfo import summary
-summary(BinaryClassifier()) 
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate) 
 
-
-print("---------------------TRAINING STARTED--------------")
-
-epochs = 5
+epochs = 10
 
 for epoch in range(epochs):
     running_loss = 0.0
@@ -106,11 +75,13 @@ for epoch in range(epochs):
         optimizer.zero_grad()
         outputs = model(inputs)
         loss = criterion(outputs, targets.unsqueeze(0))
+        # print("current Loss: ",loss)
         loss.backward()
         optimizer.step()
 
         # Print statistics
         running_loss += loss.item()
+        # print("running loss: ",running_loss)
 
     # Print average loss for the epoch
     print(f"Epoch {epoch+1}, Loss: {running_loss / len(x_train)}")
