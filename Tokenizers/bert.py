@@ -3,7 +3,7 @@ import numpy as np
 from transformers import AutoTokenizer
 
 # Load the dataset
-input_csv = pd.read_csv("../idata/Unbiased_cwe476_Data_tp.csv")
+input_csv = pd.read_csv("../Tokenized_Outputs/pre_processed_code_min_max_remd.csv")
 
 # Check the Tokenization
 tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
@@ -44,7 +44,7 @@ processed_tokenized_code = []
 
 print("---------------------TOKENIZATION FINISHED---------------")
 # Define the maximum length threshold
-max_length_threshold = 2048
+max_length_threshold = 1024
 
 print("---------------------SETTING THE VECTORS TO SAME LENGTH---------------")
 for sublist in tokenized_code:
