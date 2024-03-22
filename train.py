@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from torchinfo import summary
 import torch.nn as nn
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
@@ -7,8 +8,8 @@ import dataloader
 import model
 
 if __name__ == "__main__":
-    csv_file = "Tokenized_Outputs/Bert_tokenized.csv"
-    batch_size = 1024
+    csv_file = "Tokenized_Outputs/Canine_tokenized.csv"
+    batch_size = 2048
     split_size = 0.2
 
     train_loader,val_loader,test_loader = dataloader.CustomDataloader(csv_file,batch_size)
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     
 
     loss_fn= nn.BCELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0004)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.00004, betas=(0.95, 0.999))
 
 
     def train (dataloader,model,loss_fn,optimizer):
@@ -40,7 +41,7 @@ if __name__ == "__main__":
             optimizer.step()
             optimizer.zero_grad()
 
-            if batch % 3 == 0:
+            if batch % 2 == 0:
                 loss,current = loss.item(), (batch + 1)*len(x)
                 print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
         
@@ -65,23 +66,39 @@ if __name__ == "__main__":
 
     def test(dataloader, model, loss_fn):
         model.eval()
+        y_test = []
+        predicted= [] 
         with torch.no_grad():
             for X, y in dataloader:
                 X, y = X.to(device), y.to(device)
                 pred = model(X)
                 binary_pred = (pred > 0.5).float() 
-                
-                accuracy = accuracy_score(y.cpu(),binary_pred.cpu())
-                recall = recall_score(y.cpu(),binary_pred.cpu())
-                precision = precision_score(y.cpu(),binary_pred.cpu())
-                f1 = f1_score(y.cpu(),binary_pred.cpu())
+                predicted.append(binary_pred.cpu().numpy())
+                y_test.append(y.cpu().numpy())
+
+        # np.ndarray(y_test)
+        # np.ndarray(predicted)
+        # print(y_test)
+        p = []
+        y = []
+        for x in predicted:
+            for pr in x:
+                p.append(pr)
+
+        for x in y_test:
+            for yr in x:
+                y.append(yr)
+        accuracy = accuracy_score(y,p)
+        recall = recall_score(y ,p)
+        precision = precision_score(y,p)
+        f1 = f1_score(y,p)
 
         print(f"Accuracy: {accuracy:.4f}")
         print(f"Precision: {precision:.4f}")
         print(f"Recall: {recall:.4f}")
         print(f"F1 Score: {f1:.4f}")
 
-    epochs = 10
+    epochs = 15
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         print("----------------Batch Training Started---------------")
