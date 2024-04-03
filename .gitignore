@@ -160,6 +160,7 @@ cython_debug/
 #.idea/
 
 Tokenized_Outputs/
+idata/cwe476_Data.csv
 
 # Jupyter Notebook
 nltktokenizer-svm.ipynb

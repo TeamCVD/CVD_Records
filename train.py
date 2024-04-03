@@ -6,9 +6,11 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 import dataloader
 import model
+import numpy as np
+from sklearn.cluster import MeanShift
 
 if __name__ == "__main__":
-    csv_file = "Tokenized_Outputs/Canine_tokenized.csv"
+    csv_file = "Tokenized_Outputs/my-new-tokenizer_tokenized.csv"
     batch_size = 2048
     split_size = 0.2
 
@@ -54,7 +56,8 @@ if __name__ == "__main__":
             for X, y in dataloader:
                 X, y = X.to(device), y.to(device)
                 pred = model(X)
-                binary_pred = (pred > 0.5).float() 
+                mean = get_mean(pred.cpu().numpy())
+                binary_pred = (pred > mean).float() 
                 test_loss += loss_fn(pred, y.unsqueeze(1).float()).item()
                 for x in range(len(binary_pred)):
                     if binary_pred[x] == y [x]:
@@ -64,6 +67,24 @@ if __name__ == "__main__":
         correct /= size
         print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
+
+
+    def get_mean(array):
+        
+        array = array.reshape(-1, 1)
+        
+        mean_shift = MeanShift()
+        mean_shift.fit(array)
+        
+        cluster_centers = mean_shift.cluster_centers_
+        
+        mean_value = np.mean(cluster_centers)
+        print(cluster_centers)
+        print(mean_value)
+        
+        return mean_value
+
+
     def test(dataloader, model, loss_fn):
         model.eval()
         y_test = []
@@ -72,7 +93,8 @@ if __name__ == "__main__":
             for X, y in dataloader:
                 X, y = X.to(device), y.to(device)
                 pred = model(X)
-                binary_pred = (pred > 0.5).float() 
+                mean = get_mean(pred.cpu().numpy())
+                binary_pred = (pred > mean).float() 
                 predicted.append(binary_pred.cpu().numpy())
                 y_test.append(y.cpu().numpy())
 
