@@ -4,7 +4,7 @@ import torch.nn as nn
 class BinaryClassifier(nn.Module):
     def __init__(self):
         super(BinaryClassifier,self).__init__()
-        self.fc1 = nn.Linear(1024,2048)
+        self.fc1 = nn.Linear(2048,2048)
         self.bn1 = nn.BatchNorm1d(2048)
         self.fce1 = nn.Linear(2048, 1024)
         self.fce2 = nn.Linear(1024, 1024)
