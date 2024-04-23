@@ -163,4 +163,8 @@ Tokenized_Outputs/
 idata/cwe476_Data.csv
 
 # Jupyter Notebook
-nltktokenizer-svm.ipynb
+Old_Notebooks/nltktokenizer-svm.ipynb
+playground.ipynb
+
+Smoothened_Data/smoothened.csv
+resnet1d.pth

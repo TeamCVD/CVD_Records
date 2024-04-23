@@ -254,7 +254,7 @@ class ResNet1D(nn.Module):
         self.final_relu = nn.ReLU(inplace=True)
         # self.do = nn.Dropout(p=0.5)
         self.dense = nn.Linear(out_channels, n_classes)
-        # self.softmax = nn.Softmax(dim=1)
+        self.sigmoid = nn.Sigmoid()
         
     def forward(self, x):
         
@@ -268,7 +268,7 @@ class ResNet1D(nn.Module):
             print('after first conv', out.shape)
         if self.use_bn:
             out = self.first_block_bn(out)
-        out = self.first_block_relu(out)
+        # out = self.first_block_relu(out)
         
         # residual blocks, every block has two conv
         for i_block in range(self.n_block):
@@ -282,7 +282,7 @@ class ResNet1D(nn.Module):
         # final prediction
         if self.use_bn:
             out = self.final_bn(out)
-        out = self.final_relu(out)
+        # out = self.final_relu(out)
         out = out.mean(-1)
         if self.verbose:
             print('final pooling', out.shape)
@@ -290,7 +290,7 @@ class ResNet1D(nn.Module):
         out = self.dense(out)
         if self.verbose:
             print('dense', out.shape)
-        # out = self.softmax(out)
+        out = self.sigmoid(out)
         if self.verbose:
             print('softmax', out.shape)
         
