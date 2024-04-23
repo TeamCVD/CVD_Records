@@ -3,7 +3,7 @@ import numpy as np
 from transformers import AutoTokenizer
 
 # Load the dataset
-input_csv = pd.read_csv("../Tokenized_Outputs/Pre_processed_code.csv")
+input_csv = pd.read_csv("../Tokenized_Outputs/pre_processed_code.csv")
 
 # Check the Tokenization
 tokenizer = AutoTokenizer.from_pretrained("my-new-tokenizer")
@@ -44,7 +44,7 @@ processed_tokenized_code = []
 
 print("---------------------TOKENIZATION FINISHED---------------")
 # Define the maximum length threshold
-max_length_threshold = 2048
+max_length_threshold = 512
 
 print("---------------------SETTING THE VECTORS TO SAME LENGTH---------------")
 for sublist in tokenized_code:
