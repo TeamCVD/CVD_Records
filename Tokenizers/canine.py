@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from transformers import CanineTokenizer
 
 # Load the dataset
-input_csv = pd.read_csv("../Tokenized_Outputs/pre_processed_code_min_max_remd.csv")
+input_csv = pd.read_csv("../Tokenized_Outputs/Encoded_code.csv")
 
 # Check the Tokenization
 tokenizer = CanineTokenizer.from_pretrained("google/canine-c")
@@ -44,7 +45,7 @@ processed_tokenized_code = []
 
 print("---------------------TOKENIZATION FINISHED---------------")
 # Define the maximum length threshold
-max_length_threshold = 1024
+max_length_threshold = 256
 
 print("---------------------SETTING THE VECTORS TO SAME LENGTH---------------")
 for sublist in tokenized_code:
@@ -65,7 +66,10 @@ tokenized_code_array = np.array(processed_tokenized_code)
 print("Shape of the array:", tokenized_code_array.shape)
 print("Sample tokenized code: ",tokenized_code_array[18316])
 
-
+# scaler = MinMaxScaler()
+# scaler.fit(tokenized_code_array)
+# scaled_tokenized_code_array = scaler.transform(tokenized_code_array)
+#
 label = input_csv['Label']
 # print(label.shape)
 
@@ -73,5 +77,5 @@ print("---------------------CONVERTING INTO DATAFRAME---------------")
 df = pd.DataFrame({'token': tokenized_code_array.tolist(), 'label': label})
 
 # Converting to csv and saving it
-df.to_csv('../Tokenized_Outputs/Canine_tokenized.csv', index=False)
+df.to_csv('../Tokenized_Outputs/Canine_tokenized_128.csv', index=False)
 df.head()

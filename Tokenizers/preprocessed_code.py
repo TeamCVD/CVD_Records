@@ -34,31 +34,31 @@ def remove_stopwords(text):
 
 df_code['clean_code'] = df_code['clean_code'].apply(lambda x: remove_stopwords(x))
 
-# Remove Frequent words
-word_count = Counter()
-for text in df_code['clean_code']:
-    for word in text.split():
-        word_count[word] +=1
-
-frequent_words = set(word for (word,wc) in word_count.most_common(10))
-def remove_freq_words(text):
-    return " ".join([word for word in text.split() if word not in frequent_words])
-
-
-df_code['clean_code'] = df_code['clean_code'].apply(lambda x: remove_freq_words(x))
-print(df_code.head())
-
-# Remove Rare Words
-
-rare_words = set(word for (word,wc) in word_count.most_common()[:-50:-1])
-print(rare_words)
-
-def remove_rare_words(text):
-    return " ".join([word for word in text.split() if word not in rare_words])
-
-
-df_code['clean_code'] = df_code['clean_code'].apply(lambda x: remove_rare_words(x))
-print(df_code.head())
+# # Remove Frequent words
+# word_count = Counter()
+# for text in df_code['clean_code']:
+#     for word in text.split():
+#         word_count[word] +=1
+#
+# frequent_words = set(word for (word,wc) in word_count.most_common(10))
+# def remove_freq_words(text):
+#     return " ".join([word for word in text.split() if word not in frequent_words])
+#
+#
+# df_code['clean_code'] = df_code['clean_code'].apply(lambda x: remove_freq_words(x))
+# print(df_code.head())
+#
+# # Remove Rare Words
+#
+# rare_words = set(word for (word,wc) in word_count.most_common()[:-50:-1])
+# print(rare_words)
+#
+# def remove_rare_words(text):
+#     return " ".join([word for word in text.split() if word not in rare_words])
+#
+#
+# df_code['clean_code'] = df_code['clean_code'].apply(lambda x: remove_rare_words(x))
+# print(df_code.head())
 
 print('------------------Stemming----------------')
 
@@ -89,5 +89,5 @@ df['code'] = df_code['code']
 df['Label'] = input_csv['Label']
 
 
-df.to_csv('../Tokenized_Outputs/pre_processed_code_min_max_remd.csv', index=False)
+df.to_csv('../Tokenized_Outputs/pre_processed_code.csv', index=False)
 df.head()
