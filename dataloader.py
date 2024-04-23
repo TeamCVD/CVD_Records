@@ -1,19 +1,20 @@
 import torch
 from torch import nn
-from torch.utils.data import DataLoader,Dataset,random_split
+from torch.utils.data import DataLoader, Dataset, random_split
 import pandas as pd
 import ast
 
+
 class CustomDataset(Dataset):
-    def __init__(self,csv_file,transform=None,target_transform=None):
+    def __init__(self, csv_file, transform=None, target_transform=None):
         self.data = pd.read_csv(csv_file)
         self.transform = transform
         self.target_transform = target_transform
 
     def __len__(self):
         return len(self.data)
-    
-    def __getitem__(self,idx):
+
+    def __getitem__(self, idx):
         tokens = ast.literal_eval(self.data.iloc[idx]['token'])
         labels = int(self.data.iloc[idx]['label'])
         features = torch.tensor(tokens, dtype=torch.float32)
@@ -24,9 +25,10 @@ class CustomDataset(Dataset):
         if self.target_transform:
             label = self.target_transform(label)
 
-        return features,labels
+        return features, labels
 
-def CustomDataloader(csv_file,batch_size,split_size=0.2,shuffle=True):
+
+def CustomDataloader(csv_file, batch_size, split_size=0.2, shuffle=True):
     dataset = CustomDataset(csv_file)
 
     print("""
@@ -35,16 +37,15 @@ def CustomDataloader(csv_file,batch_size,split_size=0.2,shuffle=True):
     =============================================================================
     """)
 
-
-    train_size = int((1-split_size)*len(dataset))
+    train_size = int((1 - split_size) * len(dataset))
     test_size = len(dataset) - train_size
 
-    train_data,test_data = random_split(dataset,[train_size,test_size])
+    train_data, test_data = random_split(dataset, [train_size, test_size])
 
-    val_size = int((split_size)*train_size)
+    val_size = int(split_size * train_size)
     train_size = train_size - val_size
 
-    #######################################################################################################################################
+    # ######################################################################################################################################
     print("Train Size: ", train_size)
     print("Test Size: ", test_size)
     print("Validation Size: ", val_size)
@@ -54,21 +55,18 @@ def CustomDataloader(csv_file,batch_size,split_size=0.2,shuffle=True):
     Splitting Train, Validation and Test Data...
     =============================================================================
     """)
-    #######################################################################################################################################
+    # ######################################################################################################################################
 
-    train_data,val_data = random_split(train_data,[train_size,val_size])
-    
+    train_data, val_data = random_split(train_data, [train_size, val_size])
+
     batch_size = batch_size
     shuffle = shuffle
 
-    train_loader = DataLoader(train_data,batch_size,shuffle)
-    val_loader = DataLoader(val_data,batch_size,shuffle)
-    test_loader = DataLoader(test_data,batch_size,shuffle)
+    train_loader = DataLoader(train_data, batch_size, shuffle)
+    val_loader = DataLoader(val_data, batch_size, shuffle)
+    test_loader = DataLoader(test_data, batch_size, shuffle)
 
-
-    return train_loader,val_loader,test_loader
-
-
+    return train_loader, val_loader, test_loader
 
 # if __name__ == "__main__":
 #     csv_file =  "Tokenized_Outputs/Canine_tokenized.csv"
@@ -100,5 +98,3 @@ def CustomDataloader(csv_file,batch_size,split_size=0.2,shuffle=True):
 #         print(f"Batch {batch_idx}:")
 #         print("Features",features)
 #         print("Labels", labels)
-
-

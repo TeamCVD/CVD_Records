@@ -4,7 +4,7 @@ import torch.nn as nn
 class BinaryClassifier(nn.Module):
     def __init__(self):
         super(BinaryClassifier,self).__init__()
-        self.fc1 = nn.Linear(2048,2048)
+        self.fc1 = nn.Linear(1024,2048)
         self.bn1 = nn.BatchNorm1d(2048)
         self.fce1 = nn.Linear(2048, 1024)
         self.fce2 = nn.Linear(1024, 1024)
@@ -38,5 +38,6 @@ class BinaryClassifier(nn.Module):
         x = torch.relu(self.fc7(x))
         x = self.fc8(x)
         x = self.sigmoid(self.fc9(x))
+        print(x.shape)
         return x
  
